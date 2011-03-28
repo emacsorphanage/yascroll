@@ -166,8 +166,8 @@ disables `yascroll-bar-mode'."
   (when (yascroll:scroll-bar-visible-p)
     (yascroll:safe-show-scroll-bar)))
 
-(defun yascroll:after-change (beg end len)
-  (yascroll:update-scroll-bar))
+(defun yascroll:before-change (beg end)
+  (yascroll:hide-scroll-bar))
 
 (defun yascroll:after-window-scroll (window start)
   (with-selected-window window
@@ -181,11 +181,11 @@ disables `yascroll-bar-mode'."
   :group 'yascroll
   (if yascroll-bar-mode
       (progn
-        (add-hook 'after-change-functions 'yascroll:after-change nil t)
+        (add-hook 'before-change-functions 'yascroll:before-change nil t)
         (add-hook 'window-scroll-functions 'yascroll:after-window-scroll nil t)
         (add-hook 'window-configuration-change-hook 'yascroll:after-window-configuration-change nil t))
     (yascroll:hide-scroll-bar)
-    (remove-hook 'after-change-functions 'yascroll:after-change t)
+    (remove-hook 'before-change-functions 'yascroll:before-change t)
     (remove-hook 'window-scroll-functions 'yascroll:after-window-scroll t)
     (remove-hook 'window-configuration-change-hook 'yascroll:after-window-configuration-change t)))
 
