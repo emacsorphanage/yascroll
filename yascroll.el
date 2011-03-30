@@ -61,8 +61,10 @@ position of the right-edge of the window, and PADDING is a
 positive number of padding againt the edge."
   (save-excursion
     (let* ((window-width (window-width))
-           (current-column (move-to-column (1- window-width))))
-      (list (point) (max 0 (- window-width current-column))))))
+           (window-hscroll (window-hscroll))
+           (current-column (move-to-column (1- (+ window-width window-hscroll))))
+           (padding (- window-width (- current-column window-hscroll))))
+      (list (point) (max 0 padding)))))
 
 (defun yascroll:compute-thumb-size (window-lines buffer-lines)
   "Return the size (height) of scroll bar thumb."
