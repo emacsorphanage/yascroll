@@ -173,7 +173,7 @@ disables `yascroll-bar-mode'."
   (yascroll:hide-scroll-bar))
 
 (defun yascroll:after-window-scroll (window start)
-  (with-selected-window window
+  (when (eq (selected-window) window)
     (yascroll:safe-show-scroll-bar)))
 
 (defun yascroll:after-window-configuration-change ()
