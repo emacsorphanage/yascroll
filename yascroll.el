@@ -33,7 +33,7 @@
   :prefix "yascroll:")
 
 (defface yascroll:thumb-face
-  '((t (:background "slateblue")))
+  '((t (:background "slateblue" :foreground "slateblue")))
   "Face for scroll bar thumb."
   :group 'yascroll)
 
@@ -83,23 +83,13 @@ positive number of padding againt the edge."
       (+ scroll-top relative-in-window))))
 
 (defun yascroll:make-thumb-overlay ()
-  (destructuring-bind (edge-pos edge-padding)
-      (yascroll:line-edge-position)
-    (if (eq edge-pos (line-end-position))
-        (let ((overlay (make-overlay edge-pos edge-pos))
-              (after-string
-               (concat (make-string (1- edge-padding) ?\ )
-                       (propertize " " 'face 'yascroll:thumb-face))))
-          (put-text-property 0 1 'cursor t after-string)
-          (overlay-put overlay 'after-string after-string)
-          overlay)
-      (let ((overlay (make-overlay edge-pos (1+ edge-pos)))
-            (display-string
-             (propertize " "
-                         'face 'yascroll:thumb-face
-                         'cursor t)))
-        (overlay-put overlay 'display display-string)
-        overlay))))
+  (let* ((pos (point))
+         (display-string '(right-fringe filled-rectangle yascroll:thumb-face))
+         (after-string (propertize " " 'display display-string))
+         (overlay (make-overlay pos pos)))
+    (overlay-put overlay 'after-string after-string)
+    (overlay-put overlay 'fringe-helper t)
+    overlay))
 
 (defun yascroll:make-thumb-overlays (line size)
   "Make overlays of scroll bar thumb at LINE with SIZE."
