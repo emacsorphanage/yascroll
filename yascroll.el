@@ -92,10 +92,12 @@ work."
     ;; Make thumb overlays
     (condition-case nil
         (loop repeat size
+              with max = (point-max)
               do (progn
                    (push (yascroll:make-thumb-overlay)
                          yascroll:thumb-overlays)
-                   (next-line)))
+                   (next-line))
+              while (not (= (line-end-position) max)))
       (end-of-buffer nil))))
 
 (defun yascroll:delete-thumb-overlays ()
