@@ -96,7 +96,7 @@ work."
               do (progn
                    (push (yascroll:make-thumb-overlay)
                          yascroll:thumb-overlays)
-                   (next-line))
+                   (vertical-motion 1))
               while (not (= (line-end-position) max)))
       (end-of-buffer nil))))
 
