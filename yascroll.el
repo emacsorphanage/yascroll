@@ -73,6 +73,9 @@ work."
 
 (defun yascroll:make-thumb-overlay ()
   (let* ((pos (point))
+         ;; If `pos' is at the beginning of line, overlay of the
+         ;; fringe will be on the previous visual line.
+         (pos (if (= (line-end-position) pos) pos (1+ pos)))
          (display-string '(right-fringe filled-rectangle yascroll:thumb-face))
          (after-string (propertize " " 'display display-string))
          (overlay (make-overlay pos pos)))
@@ -87,10 +90,13 @@ work."
     (goto-char (point-min))
     (forward-line line)
     ;; Make thumb overlays
-    (loop repeat size
-          do (push (yascroll:make-thumb-overlay)
-                   yascroll:thumb-overlays)
-          while (eq (forward-line) 0))))
+    (condition-case nil
+        (loop repeat size
+              do (progn
+                   (push (yascroll:make-thumb-overlay)
+                         yascroll:thumb-overlays)
+                   (next-line)))
+      (end-of-buffer nil))))
 
 (defun yascroll:delete-thumb-overlays ()
   "Delete overlays of scroll bar thumb."
