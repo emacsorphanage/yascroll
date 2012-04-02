@@ -91,12 +91,12 @@ work."
     (forward-line line)
     ;; Make thumb overlays
     (condition-case nil
-        (loop repeat size
+        (loop for i from 1 to size
               with max = (point-max)
-              do (progn
-                   (push (yascroll:make-thumb-overlay)
-                         yascroll:thumb-overlays)
-                   (vertical-motion 1))
+              when (> i 1)
+              do (vertical-motion 1)
+              do (push (yascroll:make-thumb-overlay)
+                       yascroll:thumb-overlays)
               while (not (= (line-end-position) max)))
       (end-of-buffer nil))))
 
