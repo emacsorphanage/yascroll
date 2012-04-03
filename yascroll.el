@@ -32,9 +32,22 @@
   :group 'convenience
   :prefix "yascroll:")
 
-(defface yascroll:thumb-face
+(defface yascroll:thumb-text
+  '((t (:background "slateblue")))
+  "Face for text-type scroll bar thumb."
+  :group 'yascroll)
+
+(defface yascroll:thumb-fringe
   '((t (:background "slateblue" :foreground "slateblue")))
-  "Face for scroll bar thumb."
+  "Face for fringe-type scroll bar thumb."
+  :group 'yascroll)
+
+(defcustom yascroll:thumb-type 'text
+  "Type of fringe.
+* 'text means to use text area (default).
+* 'fringe means to use right fringe."
+  :type '(choice (const :tag "Text Area" text)
+                 (const :tag "Right Fringe" fringe))
   :group 'yascroll)
 
 (defcustom yascroll:delay-to-hide 0.5
@@ -55,6 +68,17 @@ work."
   "Overlays for scroll bar thum.")
 (make-variable-buffer-local 'yascroll:thumb-overlays)
 
+(defun yascroll:line-edge-position ()
+  "Return POSITION and PADDING where POSITION is the most neareat
+position of the right-edge of the window, and PADDING is a
+positive number of padding againt the edge."
+  (save-excursion
+    (let* ((window-width (window-width))
+           (window-hscroll (window-hscroll))
+           (current-column (move-to-column (1- (+ window-width window-hscroll))))
+           (padding (- window-width (- current-column window-hscroll))))
+      (list (point) (max 0 padding)))))
+
 (defun yascroll:compute-thumb-size (window-lines buffer-lines)
   "Return the size (height) of scroll bar thumb."
   (if (member 0 (list window-lines buffer-lines))
@@ -71,12 +95,31 @@ work."
                      (/ (float scroll-top) buffer-lines)))))
       (+ scroll-top relative-in-window))))
 
-(defun yascroll:make-thumb-overlay ()
+(defun yascroll:make-thumb-overlay-text ()
+  (destructuring-bind (edge-pos edge-padding)
+      (yascroll:line-edge-position)
+    (if (eq edge-pos (line-end-position))
+        (let ((overlay (make-overlay edge-pos edge-pos))
+              (after-string
+               (concat (make-string (1- edge-padding) ?\ )
+                       (propertize " " 'face 'yascroll:thumb-text))))
+          (put-text-property 0 1 'cursor t after-string)
+          (overlay-put overlay 'after-string after-string)
+          overlay)
+      (let ((overlay (make-overlay edge-pos (1+ edge-pos)))
+            (display-string
+             (propertize " "
+                         'face 'yascroll:thumb-text
+                         'cursor t)))
+        (overlay-put overlay 'display display-string)
+        overlay))))
+
+(defun yascroll:make-thumb-overlay-fringe ()
   (let* ((pos (point))
          ;; If `pos' is at the beginning of line, overlay of the
          ;; fringe will be on the previous visual line.
          (pos (if (= (line-end-position) pos) pos (1+ pos)))
-         (display-string '(right-fringe filled-rectangle yascroll:thumb-face))
+         (display-string '(right-fringe filled-rectangle yascroll:thumb-fringe))
          (after-string (propertize " " 'display display-string))
          (overlay (make-overlay pos pos)))
     (overlay-put overlay 'after-string after-string)
@@ -93,9 +136,15 @@ work."
     (condition-case nil
         (loop for i from 1 to size
               with max = (point-max)
+              with make-thumb-overlay
+              = (cond
+                 ((eq yascroll:thumb-type 'text)
+                  #'yascroll:make-thumb-overlay-text)
+                 ((eq yascroll:thumb-type 'fringe)
+                  #'yascroll:make-thumb-overlay-fringe))
               when (> i 1)
               do (vertical-motion 1)
-              do (push (yascroll:make-thumb-overlay)
+              do (push (funcall make-thumb-overlay)
                        yascroll:thumb-overlays)
               while (not (= (line-end-position) max)))
       (end-of-buffer nil))))
