@@ -75,8 +75,11 @@ positive number of padding againt the edge."
   (save-excursion
     (let* ((window-width (window-width))
            (window-hscroll (window-hscroll))
-           (current-column (move-to-column (1- (+ window-width window-hscroll))))
-           (padding (- window-width (- current-column window-hscroll))))
+           (virtual-width (+ window-width window-hscroll))
+           (truncations (1+ (/ (current-column) virtual-width)))
+           (virtual-edge (* virtual-width truncations))
+           (current-column (move-to-column (1- virtual-edge)))
+           (padding (- virtual-edge current-column)))
       (list (point) (max 0 padding)))))
 
 (defun yascroll:compute-thumb-size (window-lines buffer-lines)
