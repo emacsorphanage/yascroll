@@ -47,7 +47,8 @@
 * 'text means to use text area (default).
 * 'fringe means to use right fringe."
   :type '(choice (const :tag "Text Area" text)
-                 (const :tag "Right Fringe" fringe))
+                 (const :tag "Right Fringe" fringe)
+                 (const :tag "No Fringe" no))
   :group 'yascroll)
 
 (defcustom yascroll:thumb-type-term 'text
@@ -55,6 +56,7 @@
 `nil' means same as the default (`yascroll:thumb-type').
 `fringe' type is not supported for a termcap frame."
   :type '(choice (const :tag "Text Area" text)
+                 (const :tag "No Fringe" no)
                  (const :tag "Default" nil))
   :group 'yascroll)
 
@@ -144,7 +146,7 @@ positive number of padding againt the edge."
           (let ((thumb-type (if (eq yascroll:thumb-type-term nil)
                                 yascroll:thumb-type
                               yascroll:thumb-type-term)))
-            (if (memq thumb-type '(text))
+            (if (memq thumb-type '(text no))
                 thumb-type
               (warn "yascroll: Thumb type '%s' is not appropriate for \
 a termcap frame.  Forcefully set to 'text. \
@@ -158,21 +160,22 @@ Please change yascroll:thumb-type-term."
 
 (defun yascroll:make-thumb-overlays (line size)
   "Make overlays of scroll bar thumb at LINE with SIZE."
-  (save-excursion
-    ;; Jump to the line
-    (goto-char (point-min))
-    (forward-line line)
-    ;; Make thumb overlays
-    (condition-case nil
-        (loop for i from 1 to size
-              with max = (point-max)
-              with make-thumb-overlay = (yascroll:apropos-thumb-maker)
-              when (> i 1)
-              do (vertical-motion 1)
-              do (push (funcall make-thumb-overlay)
-                       yascroll:thumb-overlays)
-              while (not (= (line-end-position) max)))
-      (end-of-buffer nil))))
+  (let ((make-thumb-overlay (yascroll:apropos-thumb-maker)))
+    (when make-thumb-overlay
+      (save-excursion
+        ;; Jump to the line
+        (goto-char (point-min))
+        (forward-line line)
+        ;; Make thumb overlays
+        (condition-case nil
+            (loop for i from 1 to size
+                  with max = (point-max)
+                  when (> i 1)
+                  do (vertical-motion 1)
+                  do (push (funcall make-thumb-overlay)
+                           yascroll:thumb-overlays)
+                  while (not (= (line-end-position) max)))
+          (end-of-buffer nil))))))
 
 (defun yascroll:delete-thumb-overlays ()
   "Delete overlays of scroll bar thumb."
