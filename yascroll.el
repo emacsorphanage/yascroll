@@ -50,6 +50,14 @@
                  (const :tag "Right Fringe" fringe))
   :group 'yascroll)
 
+(defcustom yascroll:thumb-type-term 'text
+  "Type of fringe for a termcap frame.
+`nil' means same as the default (`yascroll:thumb-type').
+`fringe' type is not supported for a termcap frame."
+  :type '(choice (const :tag "Text Area" text)
+                 (const :tag "Default" nil))
+  :group 'yascroll)
+
 (defcustom yascroll:delay-to-hide 0.5
   "Delay to hide scroll bar in seconds. nil means never hide
 scroll bar."
@@ -129,6 +137,25 @@ positive number of padding againt the edge."
     (overlay-put overlay 'fringe-helper t)
     overlay))
 
+(defun yascroll:apropos-thumb-maker ()
+  "Return an appropriate make-thumb function for the current frame."
+  (case (cond
+         ((not window-system)
+          (let ((thumb-type (if (eq yascroll:thumb-type-term nil)
+                                yascroll:thumb-type
+                              yascroll:thumb-type-term)))
+            (if (memq thumb-type '(text))
+                thumb-type
+              (warn "yascroll: Thumb type '%s' is not appropriate for \
+a termcap frame.  Forcefully set to 'text. \
+Please change yascroll:thumb-type-term."
+                    thumb-type)
+              (setq yascroll:thumb-type-term 'text)
+              'text)))
+         (t yascroll:thumb-type))
+    (text #'yascroll:make-thumb-overlay-text)
+    (fringe #'yascroll:make-thumb-overlay-fringe)))
+
 (defun yascroll:make-thumb-overlays (line size)
   "Make overlays of scroll bar thumb at LINE with SIZE."
   (save-excursion
@@ -139,12 +166,7 @@ positive number of padding againt the edge."
     (condition-case nil
         (loop for i from 1 to size
               with max = (point-max)
-              with make-thumb-overlay
-              = (cond
-                 ((eq yascroll:thumb-type 'text)
-                  #'yascroll:make-thumb-overlay-text)
-                 ((eq yascroll:thumb-type 'fringe)
-                  #'yascroll:make-thumb-overlay-fringe))
+              with make-thumb-overlay = (yascroll:apropos-thumb-maker)
               when (> i 1)
               do (vertical-motion 1)
               do (push (funcall make-thumb-overlay)
