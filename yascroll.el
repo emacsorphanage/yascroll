@@ -100,13 +100,10 @@ positive number of padding againt the edge."
                      buffer-lines)))))
 
 (defun yascroll:compute-thumb-line (window-lines buffer-lines scroll-top)
-  "Return the line number of scroll bar thumb."
+  "Return the line number of scroll bar thumb relative to window."
   (if (eq buffer-lines 0)
       0
-    (let ((relative-in-window
-           (floor (* window-lines
-                     (/ (float scroll-top) buffer-lines)))))
-      (+ scroll-top relative-in-window))))
+    (floor (* window-lines (/ (float scroll-top) buffer-lines)))))
 
 (defun yascroll:make-thumb-overlay-text ()
   (destructuring-bind (edge-pos edge-padding)
@@ -164,8 +161,8 @@ Please change yascroll:thumb-type-term."
     (when make-thumb-overlay
       (save-excursion
         ;; Jump to the line
-        (goto-char (point-min))
-        (forward-line line)
+        (move-to-window-line 0)
+        (vertical-motion line)
         ;; Make thumb overlays
         (condition-case nil
             (loop for i from 1 to size
@@ -202,9 +199,10 @@ Please change yascroll:thumb-type-term."
       (let* ((scroll-top (count-lines (point-min) (window-start)))
              (thumb-line (yascroll:compute-thumb-line
                           window-lines buffer-lines scroll-top))
+             (thumb-line-abs (+ thumb-line scroll-top))
              (thumb-size (yascroll:compute-thumb-size
                           window-lines buffer-lines)))
-        (when (<= thumb-line buffer-lines)
+        (when (<= thumb-line-abs buffer-lines)
           (yascroll:make-thumb-overlays thumb-line thumb-size)
           (yascroll:schedule-hide-scroll-bar))))))
 
