@@ -149,6 +149,7 @@ scroll bar."
                        (propertize " " 'face 'yascroll:thumb-text-area))))
           (put-text-property 0 1 'cursor t after-string)
           (overlay-put overlay 'after-string after-string)
+          (overlay-put overlay 'window (selected-window))
           overlay)
       (let ((overlay (make-overlay edge-pos (1+ edge-pos)))
             (display-string
@@ -156,6 +157,7 @@ scroll bar."
                          'face 'yascroll:thumb-text-area
                          'cursor t)))
         (overlay-put overlay 'display display-string)
+        (overlay-put overlay 'window (selected-window))
         overlay))))
 
 (defun yascroll:make-thumb-overlay-fringe (left-or-right)
@@ -168,6 +170,7 @@ scroll bar."
          (overlay (make-overlay pos pos)))
     (overlay-put overlay 'after-string after-string)
     (overlay-put overlay 'fringe-helper t)
+    (overlay-put overlay 'window (selected-window))
     overlay))
 
 (defun yascroll:make-thumb-overlay-left-fringe ()
