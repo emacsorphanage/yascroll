@@ -223,6 +223,7 @@ scroll bar."
                       (> right-width 0)))
           return scroll-bar)))
 
+;;;###autoload
 (defun yascroll:show-scroll-bar ()
   "Show scroll bar in BUFFER."
   (interactive)
@@ -249,6 +250,7 @@ scroll bar."
                                             thumb-size)
               (yascroll:schedule-hide-scroll-bar))))))))
 
+;;;###autoload
 (defun yascroll:hide-scroll-bar ()
   "Hide scroll bar of BUFFER."
   (interactive)
@@ -286,6 +288,7 @@ and disable `yascroll-bar-mode'."
 (defun yascroll:after-window-configuration-change ()
   (yascroll:update-scroll-bar))
 
+;;;###autoload
 (define-minor-mode yascroll-bar-mode
   "Yet Another Scroll Bar Mode."
   :group 'yascroll
@@ -309,6 +312,7 @@ and disable `yascroll-bar-mode'."
   (when (yascroll:enabled-buffer-p (current-buffer))
     (yascroll-bar-mode 1)))
 
+;;;###autoload
 (define-global-minor-mode global-yascroll-bar-mode
   yascroll-bar-mode yascroll:turn-on
   :group 'yascroll)
