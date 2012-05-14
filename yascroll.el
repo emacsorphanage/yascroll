@@ -303,7 +303,10 @@ and disable `yascroll-bar-mode'."
   "Return non-nil if yascroll is enabled on BUFFER."
   (with-current-buffer buffer
     (and (not (minibufferp))
-         (not (memq major-mode yascroll:disabled-modes)))))
+         (not (memq major-mode yascroll:disabled-modes))
+         ;; Disable yascroll when using mumamo
+         (not (and (boundp 'mumamo-multi-major-mode)
+                   (eval 'mumamo-multi-major-mode))))))
 
 (defun yascroll:turn-on ()
   (when (yascroll:enabled-buffer-p (current-buffer))
