@@ -51,13 +51,20 @@ logical position to the right-edge of the window, and PADDING is
 a positive number of padding to the edge."
   (save-excursion
     (let* ((window-width (window-width))
+           (window-margin (destructuring-bind (left-margin . right-margin)
+                              (window-margins)
+                            (+ (or left-margin 0) (or right-margin 0))))
            (column-bol (progn (yascroll:vertical-motion (cons 0 0))
                               (current-column)))
            (column-eol (progn (yascroll:vertical-motion
                                (cons (- window-width 1 (if window-system 0 1)) 0))
                               (current-column)))
            (column-eol-visual (- column-eol column-bol))
-           (padding (- window-width column-eol-visual (if window-system 0 1))))
+
+           (padding (- window-width
+                       window-margin
+                       column-eol-visual
+                       (if window-system 0 1))))
       (list (point) padding))))
 
 
