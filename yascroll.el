@@ -4,6 +4,7 @@
 
 ;; Author: Tomohiro Matsuyama <tomo@cx4a.org>
 ;; Keywords: convenience
+;; Package-Requires: ((cl-lib "0.3"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -25,8 +26,7 @@
 
 ;;; Code:
 
-(eval-when-compile
-  (require 'cl))
+(require 'cl-lib)
 
 
 
@@ -194,10 +194,10 @@ scroll bar."
     (vertical-motion window-line)
     ;; Make thumb overlays.
     (condition-case nil
-        (loop repeat size
-              do (push (funcall make-thumb-overlay)
-                       yascroll:thumb-overlays)
-              until (zerop (vertical-motion 1)))
+        (cl-loop repeat size
+                 do (push (funcall make-thumb-overlay)
+                          yascroll:thumb-overlays)
+                 until (zerop (vertical-motion 1)))
       (end-of-buffer nil))))
 
 (defun yascroll:delete-thumb-overlays ()
@@ -221,14 +221,15 @@ scroll bar."
 
 (defun yascroll:choose-scroll-bar ()
   (when (memq window-system yascroll:enabled-window-systems)
-    (loop with (left-width right-width &rest) = (window-fringes)
-          for scroll-bar in (yascroll:listify yascroll:scroll-bar)
-          if (or (eq scroll-bar 'text-area)
-                 (and (eq scroll-bar 'left-fringe)
-                      (> left-width 0))
-                 (and (eq scroll-bar 'right-fringe)
-                      (> right-width 0)))
-          return scroll-bar)))
+    (cl-destructuring-bind (left-width right-width outside-margins)
+        (window-fringes)
+      (cl-loop for scroll-bar in (yascroll:listify yascroll:scroll-bar)
+               if (or (eq scroll-bar 'text-area)
+                      (and (eq scroll-bar 'left-fringe)
+                           (> left-width 0))
+                      (and (eq scroll-bar 'right-fringe)
+                           (> right-width 0)))
+               return scroll-bar))))
 
 ;;;###autoload
 (defun yascroll:show-scroll-bar ()
