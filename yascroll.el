@@ -326,4 +326,7 @@ and disable `yascroll-bar-mode'."
   :group 'yascroll)
 
 (provide 'yascroll)
+;; Local Variables:
+;; indent-tabs-mode: nil
+;; End:
 ;;; yascroll.el ends here
