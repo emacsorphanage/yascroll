@@ -9,7 +9,7 @@ yascroll.el is Yet Another Scroll Bar Mode for GNU Emacs.
 Screenshots
 -----------
 
-![](http://cx4a.org/software/yascroll/yascroll.png)
+![](https://raw.githubusercontent.com/m2ym/yascroll-el/master/etc/images/yascroll.png)
 
 Usage
 -----
