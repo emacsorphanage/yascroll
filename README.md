@@ -28,13 +28,9 @@ Configuration
 Author
 ------
 
-* Tomohiro Matsuyama <<tomo@cx4a.org>>
+* Tomohiro Matsuyama <<m2ym.pub@gmail.com>>
 
 Contributors
 ------------
 
 * Takafumi Arakaki <<aka.tkf@gmail.com>>
-
-----
-
-Copyright (C) 2011, 2012  Tomohiro Matsuyama <<tomo@cx4a.org>>

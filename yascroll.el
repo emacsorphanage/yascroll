@@ -1,8 +1,8 @@
 ;;; yascroll.el --- Yet Another Scroll Bar Mode
 
-;; Copyright (C) 2011, 2012  Tomohiro Matsuyama
+;; Copyright (C) 2011-2015  Tomohiro Matsuyama
 
-;; Author: Tomohiro Matsuyama <tomo@cx4a.org>
+;; Author: Tomohiro Matsuyama <m2ym.pub@gmail.com>
 ;; Keywords: convenience
 ;; Package-Requires: ((cl-lib "0.3"))
 
