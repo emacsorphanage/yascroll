@@ -173,7 +173,7 @@ scroll bar."
          ;; fringe will be on the previous visual line.
          (pos (if (= (line-end-position) pos) pos (1+ pos)))
          (display-string `(,left-or-right filled-rectangle yascroll:thumb-fringe))
-         (after-string (propertize " " 'display display-string))
+         (after-string (propertize "." 'display display-string))
          (overlay (make-overlay pos pos)))
     (overlay-put overlay 'after-string after-string)
     (overlay-put overlay 'fringe-helper t)
