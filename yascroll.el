@@ -237,7 +237,7 @@ scroll bar."
   (yascroll:hide-scroll-bar)
   (let ((scroll-bar (yascroll:choose-scroll-bar)))
     (when scroll-bar
-      (let ((window-lines (window-height))
+      (let ((window-lines (yascroll:window-height))
             (buffer-lines (count-lines (point-min) (point-max))))
         (when (< window-lines buffer-lines)
           (let* ((scroll-top (count-lines (point-min) (window-start)))
@@ -256,6 +256,14 @@ scroll bar."
                                             thumb-window-line
                                             thumb-size)
               (yascroll:schedule-hide-scroll-bar))))))))
+
+(defun yascroll:window-height ()
+  "`line-spacing'-aware calculation of `window-height'."
+  (if (and (fboundp 'window-pixel-height)
+           (fboundp 'line-pixel-height)
+           (display-graphic-p))
+      (/ (window-pixel-height) (line-pixel-height))
+    (window-height)))
 
 ;;;###autoload
 (defun yascroll:hide-scroll-bar ()
