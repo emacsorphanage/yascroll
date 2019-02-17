@@ -145,7 +145,7 @@ scroll bar."
     (floor (* window-lines (/ (float scroll-top) buffer-lines)))))
 
 (defun yascroll:make-thumb-overlay-text-area ()
-  (destructuring-bind (edge-pos edge-padding)
+  (cl-destructuring-bind (edge-pos edge-padding)
       (yascroll:line-edge-position)
     (if (= edge-pos (line-end-position))
         (let ((overlay (make-overlay edge-pos edge-pos))
@@ -247,7 +247,7 @@ scroll bar."
                  (thumb-size (yascroll:compute-thumb-size
                               window-lines buffer-lines))
                  (make-thumb-overlay
-                  (ecase scroll-bar
+                  (cl-ecase scroll-bar
                     (left-fringe 'yascroll:make-thumb-overlay-left-fringe)
                     (right-fringe 'yascroll:make-thumb-overlay-right-fringe)
                     (text-area 'yascroll:make-thumb-overlay-text-area))))
