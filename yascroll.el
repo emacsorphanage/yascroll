@@ -223,31 +223,15 @@ scroll bar."
 (defun yascroll:choose-scroll-bar ()
   "Choose scroll bar by fringe position."
   (when (memq window-system yascroll:enabled-window-systems)
-    ;; TODO: Okay, I don't know how to use `cl-destructuring-bind'.
-    ;; Right now I have it split into two duplicate parts.
-    ;;
-    ;; Make it cleaner.
-    (if (version<= "27" emacs-version)
-        ;; Merge this line here
-        (cl-destructuring-bind (left-width right-width outside-margins nil)
-            (window-fringes)
-          (cl-loop for scroll-bar in (yascroll:listify yascroll:scroll-bar)
-                   if (or (eq scroll-bar 'text-area)
-                          (and (eq scroll-bar 'left-fringe)
-                               (> left-width 0))
-                          (and (eq scroll-bar 'right-fringe)
-                               (> right-width 0)))
-                   return scroll-bar))
-      ;; And this line here.
-      (cl-destructuring-bind (left-width right-width outside-margins)
-          (window-fringes)
-        (cl-loop for scroll-bar in (yascroll:listify yascroll:scroll-bar)
-                 if (or (eq scroll-bar 'text-area)
-                        (and (eq scroll-bar 'left-fringe)
-                             (> left-width 0))
-                        (and (eq scroll-bar 'right-fringe)
-                             (> right-width 0)))
-                 return scroll-bar)))))
+    (cl-destructuring-bind (left-width right-width outside-margins &rest _)
+        (window-fringes)
+      (cl-loop for scroll-bar in (yascroll:listify yascroll:scroll-bar)
+               if (or (eq scroll-bar 'text-area)
+                      (and (eq scroll-bar 'left-fringe)
+                           (> left-width 0))
+                      (and (eq scroll-bar 'right-fringe)
+                           (> right-width 0)))
+               return scroll-bar))))
 
 ;;;###autoload
 (defun yascroll:show-scroll-bar ()
