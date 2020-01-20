@@ -225,7 +225,7 @@ not be displayed."
 (defun yascroll:choose-scroll-bar ()
   "Choose scroll bar by fringe position."
   (when (memq window-system yascroll:enabled-window-systems)
-    (cl-destructuring-bind (left-width right-width outside-margins &optional _)
+    (cl-destructuring-bind (left-width right-width outside-margins &rest _)
         (window-fringes)
       (cl-loop for scroll-bar in (yascroll:listify yascroll:scroll-bar)
                if (or (eq scroll-bar 'text-area)
