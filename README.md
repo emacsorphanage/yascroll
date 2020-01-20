@@ -1,3 +1,7 @@
+[![MELPA](https://melpa.org/packages/yascroll-badge.svg)](https://melpa.org/#/yascroll)
+[![MELPA Stable](https://stable.melpa.org/packages/yascroll-badge.svg)](https://stable.melpa.org/#/yascroll)
+
+
 # yascroll.el
 
 yascroll.el is Yet Another Scroll Bar Mode for GNU Emacs.
