@@ -1,18 +1,12 @@
-yascroll.el
-===========
-
-Overview
---------
+# yascroll.el
 
 yascroll.el is Yet Another Scroll Bar Mode for GNU Emacs.
 
-Screenshots
------------
+## Screenshots
 
 ![](https://raw.githubusercontent.com/m2ym/yascroll-el/master/etc/images/yascroll.png)
 
-Usage
------
+## Usage
 
 To toggle yascroll mode for all buffers, `M-x
 global-yascroll-bar-mode RET`. To make permanently enabled, add the
@@ -20,17 +14,14 @@ following configuration to your `~/.emacs`.
 
     (global-yascroll-bar-mode 1)
 
-Configuration
--------------
+## Configuration
 
 `M-x customize-group RET yascroll RET`.
 
-Author
-------
+## Author
 
 * Tomohiro Matsuyama <<m2ym.pub@gmail.com>>
 
-Contributors
-------------
+## Contributors
 
 * Takafumi Arakaki <<aka.tkf@gmail.com>>
