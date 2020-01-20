@@ -52,9 +52,7 @@ logical position to the right-edge of the window, and PADDING is \
 a positive number of padding to the edge."
   (save-excursion
     (let* ((window-width (window-width))
-           (window-margin (destructuring-bind (left-margin . right-margin)
-                              (window-margins)
-                            (+ (or left-margin 0) (or right-margin 0))))
+           (window-margin (+ left-margin-width right-margin-width))
            (column-bol (progn (yascroll:vertical-motion (cons 0 0))
                               (current-column)))
            (column-eol (progn (yascroll:vertical-motion
@@ -148,7 +146,7 @@ not be displayed."
 
 (defun yascroll:make-thumb-overlay-text-area ()
   "Not documented."
-  (destructuring-bind (edge-pos edge-padding)
+  (cl-destructuring-bind (edge-pos edge-padding)
       (yascroll:line-edge-position)
     (if (= edge-pos (line-end-position))
         (let ((overlay (make-overlay edge-pos edge-pos))
@@ -244,7 +242,7 @@ not be displayed."
   (yascroll:hide-scroll-bar)
   (let ((scroll-bar (yascroll:choose-scroll-bar)))
     (when scroll-bar
-      (let ((window-lines (window-height))
+      (let ((window-lines (yascroll:window-height))
             (buffer-lines (count-lines (point-min) (point-max))))
         (when (< window-lines buffer-lines)
           (let* ((scroll-top (count-lines (point-min) (window-start)))
@@ -263,6 +261,14 @@ not be displayed."
                                             thumb-window-line
                                             thumb-size)
               (yascroll:schedule-hide-scroll-bar))))))))
+
+(defun yascroll:window-height ()
+  "`line-spacing'-aware calculation of `window-height'."
+  (if (and (fboundp 'window-pixel-height)
+           (fboundp 'line-pixel-height)
+           (display-graphic-p))
+      (/ (window-pixel-height) (line-pixel-height))
+    (window-height)))
 
 ;;;###autoload
 (defun yascroll:hide-scroll-bar ()
