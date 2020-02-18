@@ -63,7 +63,11 @@ a positive number of padding to the edge."
            (padding (- window-width
                        window-margin
                        column-eol-visual
-                       (if window-system 0 1))))
+                       (if window-system 0 1)))
+           ;; When horizontal scroll has passed EOL, add padding for the columns
+           ;; between EOL and the first column in the visible window.
+           (padding (+ padding
+                       (- (max (window-hscroll) column-eol) column-eol))))
       (list (point) padding))))
 
 
