@@ -4,7 +4,9 @@
 
 ;; Author: Tomohiro Matsuyama <m2ym.pub@gmail.com>
 ;; Keywords: convenience
-;; Package-Requires: ((cl-lib "0.3"))
+;; Version: 0.1.4
+;; Package-Requires: ((emacs "26.1") (cl-lib "0.3"))
+;; URL: https://github.com/emacsorphanage/yascroll
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -141,13 +143,15 @@ not be displayed."
 (make-variable-buffer-local 'yascroll:thumb-overlays)
 
 (defun yascroll:compute-thumb-size (window-lines buffer-lines)
-  "Return the proper size (height) of scroll bar thumb."
+  "Return the proper size (height) of scroll bar thumb.
+Doc-this WINDOW-LINES and BUFFER-LINES."
   (if (zerop buffer-lines)
       1
     (max 1 (floor (* (/ (float window-lines) buffer-lines) window-lines)))))
 
 (defun yascroll:compute-thumb-window-line (window-lines buffer-lines scroll-top)
-  "Return the line number of scroll bar thumb relative to window."
+  "Return the line number of scroll bar thumb relative to window.
+Doc-this WINDOW-LINES, BUFFER-LINES and SCROLL-TOP."
   (if (zerop buffer-lines)
       0
     (floor (* window-lines (/ (float scroll-top) buffer-lines)))))
@@ -297,7 +301,7 @@ not be displayed."
 
 (defun yascroll:safe-show-scroll-bar ()
   "Same as `yascroll:show-scroll-bar' except that if errors occurs in this \
-function, this function will suppress the errors and disable `yascroll-bar-mode'."
+function, this function will suppress the errors and disable `yascroll-bar-mode`."
   (condition-case var
       (yascroll:show-scroll-bar)
     (error (yascroll:handle-error var))))
