@@ -52,7 +52,7 @@ logical position to the right-edge of the window, and PADDING is \
 a positive number of padding to the edge."
   (save-excursion
     (let* ((line-number-width
-            (if (and (>= emacs-major-version 26) display-line-numbers-mode)
+            (if (and (boundp 'display-line-numbers-mode) display-line-numbers-mode)
                 (+ (line-number-display-width) 2)
               0))
            (window-width (- (window-width) line-number-width))
