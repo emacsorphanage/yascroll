@@ -58,7 +58,6 @@ a positive number of padding to the edge."
                 (+ (line-number-display-width) 2)
               0))
            (window-width (- (window-width) line-number-width))
-           (window-margin (+ left-margin-width right-margin-width))
            (column-bol (progn (yascroll:vertical-motion (cons 0 0))
                               (current-column)))
            (column-eol (progn (yascroll:vertical-motion
@@ -67,7 +66,6 @@ a positive number of padding to the edge."
            (column-eol-visual (- column-eol column-bol))
 
            (padding (- window-width
-                       window-margin
                        column-eol-visual
                        (if window-system 0 1)))
            ;; When horizontal scroll has passed EOL, add padding for the columns
