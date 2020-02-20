@@ -117,12 +117,13 @@ not be displayed."
   :group 'yascroll)
 
 (defcustom yascroll:enabled-window-systems
-  '(nil x w32 ns pc)
+  '(nil x w32 ns pc mac)
   "A list of window-system's where yascroll can work."
   :type '(repeat (choice (const :tag "Termcap" nil)
                          (const :tag "X window" x)
                          (const :tag "MS-Windows" w32)
                          (const :tag "Macintosh Cocoa" ns)
+                         (const :tag "Macintosh Emacs Port" mac)
                          (const :tag "MS-DOS" pc)))
   :group 'yascroll)
 
