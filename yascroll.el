@@ -60,12 +60,12 @@ a positive number of padding to the edge."
            (window-width (- (window-width) line-number-width))
            (window-hscroll (window-hscroll))
            ;; Beginning of *window* line, i.e. if truncation is off we’re
-           ;; computing the continued line’s BOL. If we’re scrolled
+           ;; computing the continued line’s BOL column. If we’re scrolled
            ;; horizontally, truncation is always on and BOL is always 0.
            (column-bol (if (or truncate-lines (> window-hscroll 0))
                            0
                          (progn (yascroll:vertical-motion (cons 0 0))
-                              (current-column))))
+                                (current-column))))
            (column-eol (progn (yascroll:vertical-motion
                                (cons (- window-width 1 (if window-system 0 1)) 0))
                               (current-column)))
