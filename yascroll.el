@@ -58,20 +58,19 @@ a positive number of padding to the edge."
                 (+ (line-number-display-width) 2)
               0))
            (window-width (- (window-width) line-number-width))
-           (column-bol (progn (yascroll:vertical-motion (cons 0 0))
-                              (current-column)))
+           (window-hscroll (window-hscroll))
+           (tty-offset (if (display-graphic-p) 0 1))
+           ;; If truncation is off we’re computing the continued line’s first
+           ;; column. With horizontal scroll truncation is always on and we can
+           ;; use it’s value as first visible column.
+           (column-bol (if (or truncate-lines (> window-hscroll 0))
+                           window-hscroll
+                         (progn (yascroll:vertical-motion (cons 0 0))
+                                (current-column))))
            (column-eol (progn (yascroll:vertical-motion
-                               (cons (- window-width 1 (if window-system 0 1)) 0))
+                               (cons (- window-width 1 tty-offset) 0))
                               (current-column)))
-           (column-eol-visual (- column-eol column-bol))
-
-           (padding (- window-width
-                       column-eol-visual
-                       (if window-system 0 1)))
-           ;; When horizontal scroll has passed EOL, add padding for the columns
-           ;; between EOL and the first column in the visible window.
-           (padding (+ padding
-                       (- (max (window-hscroll) column-eol) column-eol))))
+           (padding (- window-width (- column-eol column-bol) tty-offset)))
       (list (point) padding))))
 
 
