@@ -4,7 +4,7 @@
 
 ;; Author: Tomohiro Matsuyama <m2ym.pub@gmail.com>
 ;; Keywords: convenience
-;; Version: 0.1.7
+;; Version: 0.1.8
 ;; Package-Requires: ((emacs "26.1") (cl-lib "0.3"))
 ;; URL: https://github.com/emacsorphanage/yascroll
 
