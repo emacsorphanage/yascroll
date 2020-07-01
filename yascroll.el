@@ -127,7 +127,7 @@ not be displayed."
   :group 'yascroll)
 
 (defcustom yascroll:disabled-modes
-  nil
+  '(image-mode)
   "A list of major-modes where yascroll can't work."
   :type '(repeat symbol)
   :group 'yascroll)
