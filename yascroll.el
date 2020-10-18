@@ -3,6 +3,7 @@
 ;; Copyright (C) 2011-2015  Tomohiro Matsuyama
 
 ;; Author: Tomohiro Matsuyama <m2ym.pub@gmail.com>
+;; Maintainer: Shen, Jen-Chieh <jcs090218@gmail.com>
 ;; Keywords: convenience
 ;; Version: 0.1.9
 ;; Package-Requires: ((emacs "26.1"))
