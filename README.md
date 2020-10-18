@@ -16,7 +16,9 @@ To toggle yascroll mode for all buffers, `M-x
 global-yascroll-bar-mode RET`. To make permanently enabled, add the
 following configuration to your `~/.emacs`.
 
-    (global-yascroll-bar-mode 1)
+```el
+(global-yascroll-bar-mode 1)
+```
 
 ## Configuration
 
