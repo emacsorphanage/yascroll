@@ -230,8 +230,8 @@ Doc-this WINDOW-LINES, BUFFER-LINES and SCROLL-TOP."
     (run-with-idle-timer yascroll:delay-to-hide nil
                          (lambda (buffer)
                            (when (buffer-live-p buffer)
-                              (with-current-buffer buffer
-                                (yascroll:hide-scroll-bar))))
+                             (with-current-buffer buffer
+                               (yascroll:hide-scroll-bar))))
                          (current-buffer))))
 
 (defun yascroll:choose-scroll-bar ()
@@ -299,11 +299,12 @@ Doc-this WINDOW-LINES, BUFFER-LINES and SCROLL-TOP."
   (message "yascroll-bar-mode disabled")
   var)
 
-(defun yascroll:safe-show-scroll-bar ()
+(defun yascroll:safe-show-scroll-bar (&optional window)
   "Same as `yascroll:show-scroll-bar' except that if errors occurs in this \
 function, this function will suppress the errors and disable `yascroll-bar-mode`."
+  (unless window (setq window (selected-window)))
   (condition-case var
-      (yascroll:show-scroll-bar)
+      (with-selected-window window (yascroll:show-scroll-bar))
     (error (yascroll:handle-error var))))
 
 (defun yascroll:update-scroll-bar ()
@@ -317,8 +318,7 @@ function, this function will suppress the errors and disable `yascroll-bar-mode`
 
 (defun yascroll:after-window-scroll (window start)
   "After WINDOW scrools from START."
-  (when (eq (selected-window) window)
-    (yascroll:safe-show-scroll-bar)))
+  (yascroll:safe-show-scroll-bar window))
 
 (defun yascroll:after-window-configuration-change ()
   "Window configure change function call."
