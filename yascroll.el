@@ -247,11 +247,8 @@ Doc-this WINDOW-LINES, BUFFER-LINES and SCROLL-TOP."
                            (> right-width 0)))
                return scroll-bar))))
 
-;;;###autoload
-(defun yascroll:show-scroll-bar ()
-  "Show scroll bar in BUFFER."
-  (interactive)
-  (yascroll:hide-scroll-bar)
+(defun yascroll:show-scroll-bar-internal ()
+  "Show scroll bar in buffer."
   (let ((scroll-bar (yascroll:choose-scroll-bar)))
     (when scroll-bar
       (let ((window-lines (yascroll:window-height))
@@ -273,6 +270,19 @@ Doc-this WINDOW-LINES, BUFFER-LINES and SCROLL-TOP."
                                             thumb-window-line
                                             thumb-size)
               (yascroll:schedule-hide-scroll-bar))))))))
+
+;;;###autoload
+(defun yascroll:show-scroll-bar ()
+  "Default key to show all scroll bars."
+  (interactive)
+  (yascroll:hide-scroll-bar)
+  (let ((buf (current-buffer)))
+    (walk-windows
+     (lambda (win)
+       (with-selected-window win
+         (when (eq buf (current-buffer))
+           (yascroll:show-scroll-bar-internal))))
+     nil t)))
 
 (defun yascroll:window-height ()
   "`line-spacing'-aware calculation of `window-height'."
@@ -300,8 +310,12 @@ Doc-this WINDOW-LINES, BUFFER-LINES and SCROLL-TOP."
   var)
 
 (defun yascroll:safe-show-scroll-bar (&optional window)
-  "Same as `yascroll:show-scroll-bar' except that if errors occurs in this \
-function, this function will suppress the errors and disable `yascroll-bar-mode`."
+  "Same as `yascroll:show-scroll-bar' except that if errors occurs \
+in this function, this function will suppress the errors and disable \
+`yascroll-bar-mode`.
+
+Optional argument WINDOW is the current targeted window; this is default
+to the selected window if the value is nil."
   (unless window (setq window (selected-window)))
   (condition-case var
       (with-selected-window window (yascroll:show-scroll-bar))
