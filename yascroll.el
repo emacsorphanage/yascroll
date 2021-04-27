@@ -118,6 +118,7 @@ not be displayed."
   :group 'yascroll)
 
 (defcustom yascroll:priority 20
+  "Priority display on the fringe."
   :type 'integer
   :group 'yascroll)
 
