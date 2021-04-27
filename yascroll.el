@@ -117,6 +117,10 @@ not be displayed."
                  (number :tag "Seconds"))
   :group 'yascroll)
 
+(defcustom yascroll:priority 20
+  :type 'integer
+  :group 'yascroll)
+
 (defcustom yascroll:enabled-window-systems
   '(nil x w32 ns pc mac)
   "A list of window-system's where yascroll can work."
@@ -176,6 +180,7 @@ Doc-this WINDOW-LINES, BUFFER-LINES and SCROLL-TOP."
                          'cursor t)))
         (overlay-put overlay 'display display-string)
         (overlay-put overlay 'window (selected-window))
+        (overlay-put overlay 'priority yascroll:priority)
         overlay))))
 
 (defun yascroll:make-thumb-overlay-fringe (left-or-right)
@@ -190,6 +195,7 @@ Doc-this WINDOW-LINES, BUFFER-LINES and SCROLL-TOP."
     (overlay-put overlay 'after-string after-string)
     (overlay-put overlay 'fringe-helper t)
     (overlay-put overlay 'window (selected-window))
+    (overlay-put overlay 'priority yascroll:priority)
     overlay))
 
 (defun yascroll:make-thumb-overlay-left-fringe ()
