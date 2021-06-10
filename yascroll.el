@@ -244,16 +244,22 @@ Doc-this WINDOW-LINES, BUFFER-LINES and SCROLL-TOP."
 
 (defun yascroll:choose-scroll-bar ()
   "Choose scroll bar by fringe position."
-  (when (memq window-system yascroll:enabled-window-systems)
-    (cl-destructuring-bind (left-width right-width outside-margins &rest _)
-        (window-fringes)
-      (cl-loop for scroll-bar in (yascroll:listify yascroll:scroll-bar)
-               if (or (eq scroll-bar 'text-area)
-                      (and (eq scroll-bar 'left-fringe)
-                           (> left-width 0))
-                      (and (eq scroll-bar 'right-fringe)
-                           (> right-width 0)))
-               return scroll-bar))))
+  (if (memq window-system yascroll:enabled-window-systems)
+      (cl-destructuring-bind (left-width right-width outside-margins &rest _)
+          (window-fringes)
+        (cl-loop for scroll-bar in (yascroll:listify yascroll:scroll-bar)
+                 if (or (eq scroll-bar 'text-area)
+                        (and (eq scroll-bar 'left-fringe)
+                             (> left-width 0))
+                        (and (eq scroll-bar 'right-fringe)
+                             (> right-width 0)))
+                 return scroll-bar))
+
+    (display-warning
+     'yascroll
+     (format "Not enabling yascroll because window-system '%s' is not in '%s' %s"
+             window-system 'yascroll:enabled-window-systems yascroll:enabled-window-systems)
+     :warning)))
 
 (defun yascroll:show-scroll-bar-internal ()
   "Show scroll bar in buffer."
