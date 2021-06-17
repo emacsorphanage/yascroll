@@ -346,7 +346,7 @@ to the selected window if the value is nil."
 
 (defun yascroll:after-window-scroll (window start)
   "After WINDOW scrools from START."
-  (yascroll:safe-show-scroll-bar window))
+  (yascroll:safe-show-scroll-bar))
 
 (defun yascroll:after-window-configuration-change ()
   "Window configure change function call."
