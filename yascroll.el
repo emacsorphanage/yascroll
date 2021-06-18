@@ -259,7 +259,6 @@ Doc-this WINDOW-LINES, BUFFER-LINES and SCROLL-TOP."
                         (and (eq scroll-bar 'right-fringe)
                              (> right-width 0)))
                  return scroll-bar))
-
     (display-warning
      'yascroll
      (format "Not enabling yascroll because window-system '%s' is not in '%s' %s"
