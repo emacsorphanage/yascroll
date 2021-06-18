@@ -232,15 +232,20 @@ Doc-this WINDOW-LINES, BUFFER-LINES and SCROLL-TOP."
 
 ;;; Scroll Bar
 
+(defvar-local yascroll:delay-timer nil
+  "Delay timer.")
+
 (defun yascroll:schedule-hide-scroll-bar ()
   "Hide scroll bar automatically."
   (when yascroll:delay-to-hide
-    (run-with-idle-timer yascroll:delay-to-hide nil
-                         (lambda (buffer)
-                           (when (buffer-live-p buffer)
-                             (with-current-buffer buffer
-                               (yascroll:hide-scroll-bar))))
-                         (current-buffer))))
+    (when (timerp yascroll:delay-timer) (cancel-timer yascroll:delay-timer))
+    (setq yascroll:delay-timer
+          (run-with-idle-timer yascroll:delay-to-hide nil
+                               (lambda (buffer)
+                                 (when (buffer-live-p buffer)
+                                   (with-current-buffer buffer
+                                     (yascroll:hide-scroll-bar))))
+                               (current-buffer)))))
 
 (defun yascroll:choose-scroll-bar ()
   "Choose scroll bar by fringe position."
