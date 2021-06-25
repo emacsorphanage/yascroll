@@ -348,9 +348,14 @@ to the selected window if the value is nil."
   "Before change BEG point and END point."
   (yascroll:hide-scroll-bar))
 
+(defvar yascroll--last-scroll nil
+  "Record the after scroll parameters.")
+
 (defun yascroll:after-window-scroll (window start)
-  "After WINDOW scrools from START."
-  (yascroll:safe-show-scroll-bar))
+  "After WINDOW scrolls from START."
+  (unless (equal yascroll--last-scroll `(,window . ,start))
+    (setq yascroll--last-scroll `(,window . ,start))
+    (yascroll:safe-show-scroll-bar window)))
 
 (defun yascroll:after-window-configuration-change ()
   "Window configure change function call."
