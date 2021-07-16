@@ -1,5 +1,6 @@
 [![MELPA](https://melpa.org/packages/yascroll-badge.svg)](https://melpa.org/#/yascroll)
 [![MELPA Stable](https://stable.melpa.org/packages/yascroll-badge.svg)](https://stable.melpa.org/#/yascroll)
+[![CI](https://github.com/emacsorphanage/yascroll/actions/workflows/test.yml/badge.svg)](https://github.com/emacsorphanage/yascroll/actions/workflows/test.yml)
 
 # yascroll.el
 
