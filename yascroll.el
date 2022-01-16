@@ -295,12 +295,9 @@ Doc-this WINDOW-LINES, BUFFER-LINES and SCROLL-TOP."
   (interactive)
   (yascroll:hide-scroll-bar)
   (let ((buf (current-buffer)))
-    (walk-windows
-     (lambda (win)
-       (with-selected-window win
-         (when (eq buf (current-buffer))
-           (yascroll:show-scroll-bar-internal))))
-     nil t)))
+    (dolist (win (get-buffer-window-list buf nil t))
+      (with-selected-window win
+        (yascroll:show-scroll-bar-internal)))))
 
 (defun yascroll:window-height ()
   "`line-spacing'-aware calculation of `window-height'."
@@ -334,9 +331,9 @@ in this function, this function will suppress the errors and disable \
 
 Optional argument WINDOW is the current targeted window; this is default
 to the selected window if the value is nil."
-  (unless window (setq window (selected-window)))
   (condition-case var
-      (with-selected-window window (yascroll:show-scroll-bar))
+      (with-selected-window (or window (selected-window))
+        (yascroll:show-scroll-bar))
     (error (yascroll:handle-error var))))
 
 (defun yascroll:update-scroll-bar ()
