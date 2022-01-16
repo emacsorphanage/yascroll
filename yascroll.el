@@ -294,10 +294,9 @@ Doc-this WINDOW-LINES, BUFFER-LINES and SCROLL-TOP."
   "Default key to show all scroll bars."
   (interactive)
   (yascroll:hide-scroll-bar)
-  (let ((buf (current-buffer)))
-    (dolist (win (get-buffer-window-list buf nil t))
-      (with-selected-window win
-        (yascroll:show-scroll-bar-internal)))))
+  (dolist (win (get-buffer-window-list (current-buffer) nil t))
+    (with-selected-window win
+      (yascroll:show-scroll-bar-internal))))
 
 (defun yascroll:window-height ()
   "`line-spacing'-aware calculation of `window-height'."
