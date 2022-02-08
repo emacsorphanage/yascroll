@@ -30,9 +30,6 @@
 
 ;;; Code:
 
-(require 'cl-lib)
-(require 'subr-x)
-
 
 
 ;;; Utilities:
