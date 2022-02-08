@@ -31,6 +31,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'subr-x)
 
 
 
@@ -144,9 +145,8 @@ not be displayed."
 
 ;;; Scroll Bar Thumb
 
-(defvar yascroll:thumb-overlays nil
+(defvar-local yascroll:thumb-overlays nil
   "Overlays for scroll bar thum.")
-(make-variable-buffer-local 'yascroll:thumb-overlays)
 
 (defun yascroll:compute-thumb-size (window-lines buffer-lines)
   "Return the proper size (height) of scroll bar thumb.
@@ -267,27 +267,26 @@ Doc-this WINDOW-LINES, BUFFER-LINES and SCROLL-TOP."
 
 (defun yascroll:show-scroll-bar-internal ()
   "Show scroll bar in buffer."
-  (let ((scroll-bar (yascroll:choose-scroll-bar)))
-    (when scroll-bar
-      (let ((window-lines (yascroll:window-height))
-            (buffer-lines (count-lines (point-min) (point-max))))
-        (when (< window-lines buffer-lines)
-          (let* ((scroll-top (count-lines (point-min) (window-start)))
-                 (thumb-window-line (yascroll:compute-thumb-window-line
-                                     window-lines buffer-lines scroll-top))
-                 (thumb-buffer-line (+ scroll-top thumb-window-line))
-                 (thumb-size (yascroll:compute-thumb-size
-                              window-lines buffer-lines))
-                 (make-thumb-overlay
-                  (cl-ecase scroll-bar
-                    (left-fringe 'yascroll:make-thumb-overlay-left-fringe)
-                    (right-fringe 'yascroll:make-thumb-overlay-right-fringe)
-                    (text-area 'yascroll:make-thumb-overlay-text-area))))
-            (when (<= thumb-buffer-line buffer-lines)
-              (yascroll:make-thumb-overlays make-thumb-overlay
-                                            thumb-window-line
-                                            thumb-size)
-              (yascroll:schedule-hide-scroll-bar))))))))
+  (when-let ((scroll-bar (yascroll:choose-scroll-bar)))
+    (let ((window-lines (yascroll:window-height))
+          (buffer-lines (count-lines (point-min) (point-max))))
+      (when (< window-lines buffer-lines)
+        (let* ((scroll-top (count-lines (point-min) (window-start)))
+               (thumb-window-line (yascroll:compute-thumb-window-line
+                                   window-lines buffer-lines scroll-top))
+               (thumb-buffer-line (+ scroll-top thumb-window-line))
+               (thumb-size (yascroll:compute-thumb-size
+                            window-lines buffer-lines))
+               (make-thumb-overlay
+                (cl-ecase scroll-bar
+                  (left-fringe 'yascroll:make-thumb-overlay-left-fringe)
+                  (right-fringe 'yascroll:make-thumb-overlay-right-fringe)
+                  (text-area 'yascroll:make-thumb-overlay-text-area))))
+          (when (<= thumb-buffer-line buffer-lines)
+            (yascroll:make-thumb-overlays make-thumb-overlay
+                                          thumb-window-line
+                                          thumb-size)
+            (yascroll:schedule-hide-scroll-bar)))))))
 
 ;;;###autoload
 (defun yascroll:show-scroll-bar ()
@@ -340,9 +339,14 @@ to the selected window if the value is nil."
   (when (yascroll:scroll-bar-visible-p)
     (yascroll:safe-show-scroll-bar)))
 
-(defun yascroll:before-change (beg end)
-  "Before change BEG point and END point."
+(defun yascroll:before-change (&rest _)
+  "Before modifiying the buffer."
   (yascroll:hide-scroll-bar))
+
+(defun yascroll:after-change (&rest _)
+  "After modifiying the buffer."
+  (unless yascroll:delay-to-hide
+    (yascroll:safe-show-scroll-bar)))
 
 (defvar yascroll--last-scroll nil
   "Record the after scroll parameters.")
@@ -364,10 +368,12 @@ to the selected window if the value is nil."
   (if yascroll-bar-mode
       (progn
         (add-hook 'before-change-functions 'yascroll:before-change nil t)
+        (add-hook 'after-change-functions 'yascroll:after-change nil t)
         (add-hook 'window-scroll-functions 'yascroll:after-window-scroll nil t)
         (add-hook 'window-configuration-change-hook 'yascroll:after-window-configuration-change nil t))
     (yascroll:hide-scroll-bar)
     (remove-hook 'before-change-functions 'yascroll:before-change t)
+    (remove-hook 'after-change-functions 'yascroll:after-change t)
     (remove-hook 'window-scroll-functions 'yascroll:after-window-scroll t)
     (remove-hook 'window-configuration-change-hook 'yascroll:after-window-configuration-change t)))
 
