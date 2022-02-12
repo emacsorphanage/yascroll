@@ -36,6 +36,18 @@
 
 ;;; Utilities:
 
+(defmacro yascroll:with-no-redisplay (&rest body)
+  "Execute BODY without any redisplay execution."
+  (declare (indent 0) (debug t))
+  `(let ((inhibit-redisplay t)
+         after-focus-change-function
+         buffer-list-update-hook
+         display-buffer-alist
+         window-configuration-change-hook
+         window-size-change-functions
+         window-state-change-hook)
+     ,@body))
+
 (defun yascroll:listify (object)
   "Turn OBJECT to list type."
   (if (listp object) object (list object)))
@@ -216,8 +228,7 @@ Doc-this WINDOW-LINES, BUFFER-LINES and SCROLL-TOP."
     ;; Make thumb overlays.
     (condition-case nil
         (cl-loop repeat size
-                 do (push (funcall make-thumb-overlay)
-                          yascroll:thumb-overlays)
+                 do (push (funcall make-thumb-overlay) yascroll:thumb-overlays)
                  until (zerop (vertical-motion 1)))
       (end-of-buffer nil))))
 
@@ -291,10 +302,11 @@ Doc-this WINDOW-LINES, BUFFER-LINES and SCROLL-TOP."
 (defun yascroll:show-scroll-bar ()
   "Default key to show all scroll bars."
   (interactive)
-  (yascroll:hide-scroll-bar)
-  (dolist (win (get-buffer-window-list (current-buffer) nil t))
-    (with-selected-window win
-      (yascroll:show-scroll-bar-internal))))
+  (yascroll:with-no-redisplay
+    (yascroll:hide-scroll-bar)
+    (dolist (win (get-buffer-window-list (current-buffer) nil t))
+      (with-selected-window win
+        (yascroll:show-scroll-bar-internal)))))
 
 (defun yascroll:window-height ()
   "`line-spacing'-aware calculation of `window-height'."
@@ -347,14 +359,9 @@ to the selected window if the value is nil."
   (unless yascroll:delay-to-hide
     (yascroll:safe-show-scroll-bar)))
 
-(defvar yascroll--last-scroll nil
-  "Record the after scroll parameters.")
-
 (defun yascroll:after-window-scroll (window start)
   "After WINDOW scrolls from START."
-  (unless (equal yascroll--last-scroll `(,window . ,start))
-    (setq yascroll--last-scroll `(,window . ,start))
-    (yascroll:safe-show-scroll-bar window)))
+  (yascroll:safe-show-scroll-bar window))
 
 (defun yascroll:after-window-configuration-change ()
   "Window configure change function call."
