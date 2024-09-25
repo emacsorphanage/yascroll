@@ -1,7 +1,7 @@
 ;;; yascroll.el --- Yet Another Scroll Bar Mode
 
 ;; Copyright (C) 2011-2015 Tomohiro Matsuyama <m2ym.pub@gmail.com>
-;; Copyright (C) 2020-2022 Shen, Jen-Chieh <jcs090218@gmail.com>
+;; Copyright (C) 2020-2024 Shen, Jen-Chieh <jcs090218@gmail.com>
 
 ;; Author: Tomohiro Matsuyama <m2ym.pub@gmail.com>
 ;; Maintainer: Shen, Jen-Chieh <jcs090218@gmail.com>
